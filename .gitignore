@@ -1,0 +1,25 @@
+# .gitignore
+
+# Byte-compiled / optimized / C extensions
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+
+# Session files
+angel_session.json
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# IDE / Editor specific files
+.vscode/
+.idea/
+.portia/
+*.swp
+*.swo
