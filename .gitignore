@@ -23,3 +23,8 @@ ENV/
 .portia/
 *.swp
 *.swo
+
+logs/
+tools/
+
+main.py
