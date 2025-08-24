@@ -89,7 +89,7 @@ Empowers retail investors by making **data-driven, AI-assisted trading accessibl
 
 ## ⚙️ How It Works  
 
-1. **Login** with AngelOne credentials → session saved securely.  
+1. **Login** with AngelOne credentials → session saved securely. 
 2. **Chat naturally** with the assistant (e.g., *“What’s happening with RELIANCE today?”*).  
 3. **Portia classifies intent** and builds a **robust multi-step plan**.  
 4. MCP tools query AngelOne / scrape NSE / run analysis.  
@@ -98,6 +98,10 @@ Empowers retail investors by making **data-driven, AI-assisted trading accessibl
 
 ---
 
+## How To Run
+1. Install the requirements
+2. Run api.py Backend
+3. Run ui.py Frontend 
 
 ## 🏁 Conclusion  
 
