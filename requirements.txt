@@ -1,0 +1,24 @@
+# requirements.txt
+
+# Core AI Agent Framework
+portia-ai
+
+# Web Server for the Agent's Brain
+fastapi
+uvicorn[standard]
+
+# Web UI Framework
+streamlit
+pandas
+
+# Broker API and Authentication
+smartapi-python
+pyotp
+python-dotenv
+
+# For making HTTP requests from UI to API
+requests
+
+# New libraries for analysis
+pandas-ta
+beautifulsoup4

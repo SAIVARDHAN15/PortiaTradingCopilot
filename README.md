@@ -1,46 +1,110 @@
-# 🧠 Portia Trading Agent
+# 📈 AI-Powered Trading Agent with Portia + AngelOne  
 
-Welcome to the Portia Trading Agent, a conversational AI application for interacting with your Angel One trading account. This agent uses Google's Gemini models via the Portia AI framework to understand natural language commands, fetch market data, analyze your portfolio, and securely place trades.
-
-The user interface is built with Streamlit, providing a clean, modern chat experience.
-
-
+An intelligent trading companion that connects **Portia AI** with **AngelOne APIs** to help users analyze markets, understand their portfolio, and place trades confidently — all through a natural chat interface with a modern, streamlined UI.  
 
 ---
 
-## ✨ Features
+## 🚀 Overview  
 
-* **Conversational Interface:** Interact with your trading account using plain English.
-* **Secure Login:** A dedicated, secure login flow for your Angel One account.
-* **Real-time Data:** Fetch last-traded prices (LTP) and historical OHLC data.
-* **Portfolio Analysis:** View and analyze your current holdings and positions.
-* **Safe Order Placement:** A hybrid system that uses AI to understand your trade request and requires explicit user confirmation in the UI before executing any order.
-* **Flexible & Reliable:** Uses a hybrid agent design.
-    * **Reliable Plans (`PlanBuilderV2`):** For critical, sequential tasks like login and order execution.
-    * **Autonomous LLM:** For flexible, open-ended analysis and queries.
+Retail investors face two main challenges:  
+1. **Overwhelming information** – too much raw data, not enough insights.  
+2. **Complex execution** – navigating brokers’ APIs & tools is intimidating.  
 
----
-
-## 🛠️ Tech Stack
-
-* **AI Framework:** [Portia AI](https://www.portia.ai/)
-* **LLM:** Google Gemini 1.5 Flash
-* **Backend:** FastAPI
-* **Frontend:** Streamlit
-* **Broker API:** Angel One SmartAPI
+Our solution bridges this gap:  
+- **Conversational AI assistant** powered by Portia.  
+- **Integrated with AngelOne** for real order execution.  
+- **Built-in market scraping & portfolio analytics** to help users make better trading decisions.  
+- **Modern UI (Streamlit)** that makes interaction simple, intuitive, and beautiful.  
 
 ---
 
-## 🚀 Getting Started
+## ✨ Key Features  
 
-### Prerequisites
+### 🧠 Smart Intent Classification  
+- User requests are **understood via LLM-driven intent parsing**.  
+- Supports intents like `place_order`, `get_stock_info`, `analyze_portfolio`, `market_movers`.  
+- Reliable plan-based execution ensures the right tools are invoked every time.  
 
-* Python 3.8+
-* An Angel One trading account with SmartAPI access.
-* A Google AI Studio API key for Gemini.
+### 📊 Stock & Portfolio Analysis  
+- Fetches **real-time OHLC data** via AngelOne.  
+- AI generates **insightful, human-like stock analysis**.  
+- Portfolio analysis **loops through holdings**, provides stock-level insights, then summarizes strengths & risks.  
 
-### 1. Clone the Repository
+### 💸 Trade Execution (with Confirmation Flow)  
+- Users can **place trades naturally in chat** (e.g., “Buy 1 share of Suzlon”).  
+- Order parameters auto-parsed with schema validation.  
+- **Confirmation step with buttons** ensures safety before execution.  
+- Trades routed securely via AngelOne API.  
 
-```bash
-git clone <https://github.com/SAIVARDHAN15/PortiaTradingCopilot.git>
-cd PortiaAgent
+### 🌐 Market Movers Scraper  
+- Pulls **top gainers/losers** from NSE dynamically.  
+- Keeps users updated on opportunities without leaving chat.  
+
+### 🎨 Streamlined User Interface  
+- Built with **Streamlit** for simplicity and elegance.  
+- Chat-first interface with **structured confirmations, buttons, and clean layout**.  
+- Focused on **UX and clarity** — no clutter, just actionable insights.  
+
+---
+
+## 🏆 Why This Project Stands Out  
+
+### 🔹 Potential Impact  
+Empowers retail investors by making **data-driven, AI-assisted trading accessible**. Removes friction in research, analysis, and execution just by general language.  
+
+### 🔹 Creativity & Originality  
+- Innovative blend of **Portia’s agent planning** with a **real brokerage API**.  
+- Creative use of **LLM + structured schemas + plans** to ensure reliability.  
+- Combines **NSE scraping, broker integration, portfolio insights, and execution** in one unified assistant.  
+
+### 🔹 Learning & Growth  
+- Team tackled **new domains simultaneously**: Portia AI, AngelOne APIs, database indexing, and frontend UX.  
+- Solved real-world challenges (e.g., symbol lookup via SQLite, robust error handling, safe trade confirmation).  
+- First time building a **full-stack AI trading agent**.  
+
+### 🔹 Implementation of the Idea  
+- Fully functional **end-to-end pipeline**:  
+  - Chat → Intent → Plan → MCP tool → Broker API → Confirmation → Execution.  
+- Resilient error handling and structured outputs.  
+- Clear separation of backend (`api.py`, `angelone_mcp_server.py`) and UI (`ui.py`).  
+
+### 🔹 Aesthetics & UX  
+- Streamlined chat experience.  
+- Confirmation buttons for safe order flow.  
+- Minimal, elegant design with clear status updates.  
+- Judges can interact like a **real user** without needing to understand backend complexity.  
+
+---
+
+## 🛠️ Tech Stack  
+
+- **[Portia](https://github.com/portia)** – AI planning and orchestration  
+- **AngelOne SmartAPI** – real trading integration  
+- **SQLite** – local instrument database for symbol lookups  
+- **Streamlit** – modern chat-based UI  
+- **Python (FastAPI + Pydantic)** – backend and API design  
+- **BeautifulSoup + Requests** – market mover web scraping  
+
+---
+
+## ⚙️ How It Works  
+
+1. **Login** with AngelOne credentials → session saved securely.  
+2. **Chat naturally** with the assistant (e.g., *“What’s happening with RELIANCE today?”*).  
+3. **Portia classifies intent** and builds a **robust multi-step plan**.  
+4. MCP tools query AngelOne / scrape NSE / run analysis.  
+5. Assistant **summarizes insights** or prepares an **order for confirmation**.  
+6. On confirmation, order is **executed via AngelOne API**.  
+
+---
+
+
+## 🏁 Conclusion  
+
+This project delivers a **powerful, creative, and user-friendly AI trading assistant** that demonstrates the potential of **Portia in financial automation**.  
+
+By combining **LLM intelligence**, **structured planning**, **real brokerage integration**, and a **beautiful UI**, it empowers retail investors to make informed decisions and act on them seamlessly.  
+
+> 🚀 More than just a demo — it’s a glimpse into the **future of AI-driven trading.**  
+
+---

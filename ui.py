@@ -16,11 +16,6 @@ st.set_page_config(
 # --- API Configuration ---
 API_BASE_URL = "http://127.0.0.1:8000"
 
-# --- Custom Styling (Modern Look) ---
-
-
-
-# --- Session State Initialization ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "logged_in" not in st.session_state:
@@ -30,8 +25,6 @@ if "pending_confirmation" not in st.session_state:
 
 
 # --- UI Components ---
-
-# In ui.py
 
 def render_sidebar():
     """Renders the sidebar with the simplified login form."""
@@ -73,35 +66,33 @@ def render_sidebar():
 
 
 def render_chat_history():
-    """Renders the main chat interface and history."""
-    for message in st.session_state.messages:
+    for i, message in enumerate(st.session_state.messages):
         with st.chat_message(message["role"]):
-            # Standard text content
-            st.markdown(message["content"])
-
-            # Handle special data types
-            if message.get("type") == "json" and message.get("data"):
-                st.json(message["data"])
+            if message.get("content"): st.markdown(message["content"])
+            if message.get("type") == "json": st.json(message["data"])
+            if message.get("type") == "dataframe":
+                try: st.dataframe(pd.DataFrame(message["data"]))
+                except Exception as e: st.error(f"Failed to render dataframe: {e}")
             
-            if message.get("type") == "dataframe" and message.get("data"):
-                try:
-                    df = pd.DataFrame(message["data"])
-                    st.dataframe(df)
-                except Exception as e:
-                    st.error(f"Failed to render dataframe: {e}")
-
-            # Handle order confirmation requests
-            if message.get("type") == "confirmation" and message.get("data"):
-                st.session_state.pending_confirmation = message["data"]
-                # Use a unique key for the button based on timestamp to avoid conflicts
-                button_key = f"confirm_{datetime.now().timestamp()}"
-                if st.button("✅ Confirm Order", key=button_key):
-                    handle_order_confirmation()
+            # This is the updated confirmation logic
+            if message.get("type") == "confirmation":
+                if i == len(st.session_state.messages) - 1 and st.session_state.pending_confirmation:
+                    col1, col2, col3 = st.columns([1, 1, 2])
+                    with col1:
+                        if st.button("✅ Confirm", use_container_width=True, key=f"confirm_{i}"):
+                            handle_order_confirmation()
+                            st.rerun()
+                    with col2:
+                        if st.button("❌ Cancel", use_container_width=True, key=f"cancel_{i}"):
+                            st.session_state.pending_confirmation = None
+                            st.session_state.messages.append({
+                                "role": "assistant", "content": "Order cancelled.",
+                                "type": "text", "data": None
+                            })
+                            st.rerun()
 
 
 # --- API Call Handlers ---
-
-# In ui.py
 
 def handle_login(client_code, password): # Remove totp from arguments
     """Sends login credentials to the backend API."""
@@ -139,12 +130,19 @@ def handle_chat_message(prompt: str):
             response.raise_for_status()
 
             api_response = response.json()
+
+            # Always add assistant message to history
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": api_response.get("content"),
                 "type": api_response.get("type"),
                 "data": api_response.get("data")
             })
+
+            # If it's a pending order confirmation, store the params
+            if api_response.get("status") == "pending_confirmation":
+                st.session_state.pending_confirmation = api_response.get("data")
+
         except requests.exceptions.RequestException as e:
             error_detail = e.response.json().get("detail", str(e)) if e.response else str(e)
             st.session_state.messages.append({
@@ -158,31 +156,29 @@ def handle_chat_message(prompt: str):
 def handle_order_confirmation():
     """Sends the confirmed order details to the backend for execution."""
     if st.session_state.pending_confirmation:
-        with st.spinner("Executing order..."):
+        # Show a spinner WHILE the order is being placed
+        with st.spinner("Placing order..."):
             try:
                 response = requests.post(
                     f"{API_BASE_URL}/execute_order",
                     json={"order_params": st.session_state.pending_confirmation}
                 )
                 response.raise_for_status()
-
                 api_response = response.json()
+                # Add the success message to the chat
                 st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": api_response.get("content"),
-                    "type": "text",
-                    "data": None
+                    "role": "assistant", "content": api_response.get("content"),
+                    "type": "text", "data": None
                 })
             except requests.exceptions.RequestException as e:
                 error_detail = e.response.json().get("detail", str(e)) if e.response else str(e)
                 st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": f"Order Execution Failed: {error_detail}",
-                    "type": "error",
-                    "data": None
+                    "role": "assistant", "content": f"Order Placement Failed: {error_detail}",
+                    "type": "error", "data": None
                 })
             finally:
-                st.session_state.pending_confirmation = None # Clear the pending state
+                # Clear the pending state AFTER the attempt
+                st.session_state.pending_confirmation = None
 
 
 # --- Main Application Logic ---

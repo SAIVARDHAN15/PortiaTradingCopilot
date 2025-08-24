@@ -31,6 +31,13 @@ def _load_session() -> Optional[dict]:
 mcp = FastMCP("angelone-mcp")
 
 # --- Pydantic Models for typed inputs ---
+class OhlcParams(BaseModel):
+    exchange: str
+    symboltoken: str
+    tradingsymbol: str
+    interval: str = "ONE_DAY"
+    fromdate: str
+    todate: str
 
 class LoginResponse(BaseModel):
     access_token: str
@@ -77,6 +84,19 @@ def _require_client() -> SmartConnect:
     return sc
 
 # --- MCP Tools ---
+@mcp.tool()
+def angel_get_ohlc(params: OhlcParams) -> Dict[str, Any]:
+    """
+    Fetch historical Open-High-Low-Close (OHLC) candle data for a symbol.
+    This tool now takes a single object containing all necessary parameters.
+    """
+    sc = _require_client()
+    # Convert the pydantic model to a dict for the SmartAPI call
+    param_dict = params.model_dump()
+    candle_data = sc.getCandleData(param_dict)
+    if not candle_data or "data" not in candle_data:
+        raise Exception(f"OHLC API failed: {candle_data}")
+    return candle_data
 
 @mcp.tool()
 def angel_login(client_code: str, password: str, totp: str) -> LoginResponse:
@@ -114,26 +134,6 @@ def angel_get_ltp(req: LTPRequest) -> Dict[str, Any]:
     if not ltp or "data" not in ltp or not ltp["data"]:
         raise Exception(f"LTP API failed: {ltp}")
     return ltp["data"]
-
-@mcp.tool()
-def angel_get_ohlc(exchange: str, tradingsymbol: str, symboltoken: str, interval: str, fromdate: str, todate: str) -> Dict[str, Any]:
-    """
-    Fetch historical Open-High-Low-Close (OHLC) candle data for a symbol.
-    interval: ONE_MINUTE, THREE_MINUTE, FIVE_MINUTE, TEN_MINUTE, FIFTEEN_MINUTE, THIRTY_MINUTE, ONE_HOUR, ONE_DAY
-    Dates must be in 'YYYY-MM-DD HH:MM' format.
-    """
-    sc = _require_client()
-    params = {
-        "exchange": exchange,
-        "symboltoken": symboltoken,
-        "interval": interval,
-        "fromdate": fromdate,
-        "todate": todate,
-    }
-    candle_data = sc.getCandleData(params)
-    if not candle_data or "data" not in candle_data:
-         raise Exception(f"OHLC API failed: {candle_data}")
-    return candle_data
 
 @mcp.tool()
 def angel_positions() -> Dict[str, Any]:

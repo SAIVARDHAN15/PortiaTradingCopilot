@@ -28,3 +28,4 @@ logs/
 tools/
 
 main.py
+download_instructions.py
